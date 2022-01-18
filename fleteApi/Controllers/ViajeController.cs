@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.PeerToPeer.Collaboration;
+using System.Security.Cryptography.X509Certificates;
 using fleteApi.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace fleteApi.Controllers
 {
@@ -52,6 +57,82 @@ namespace fleteApi.Controllers
             }
         }
 
+        [HttpGet("pendientes")]
+        public ActionResult GetViajesPendientesPorFecha(DateTime fecha)
+        {
+            try
+            {
+                return Ok(context.Viaje.Where(viaje => viaje.FechaEntrega.Value.Date == fecha.Date && viaje.Completado == null).OrderBy(x=> x.Orden ?? x.HorarioDesde).ThenBy(x=>x.HorarioHasta).ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("completados")]
+        public ActionResult GetViajesCompletadosPorFecha(DateTime fecha)
+        {
+            try
+            {
+                return Ok(context.Viaje.Where(viaje => viaje.FechaEntrega.Value.Date == fecha.Date && viaje.Completado != null).OrderBy(x=>x.Completado).ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("calendario")]
+        public ActionResult GetViajesCalendarioPorFecha(DateTime fecha)
+        {
+            try
+            {
+                var listaViajes = context.Viaje.Where(x => x.FechaEntrega.Value.Month == fecha.Month && x.FechaEntrega.Value.Year == fecha.Year).ToList();
+
+                var listaDias = new List<DiaCalendario>();
+
+                foreach (var dia in listaViajes.Where(x => x.FechaEntrega != null).Select(x => x.FechaEntrega.Value.Day).Distinct())
+                {
+                    var viajesEncontrados = listaViajes.Where(x => x.FechaEntrega != null && x.FechaEntrega.Value.Day == dia).ToList();
+
+                    var cantidadViajesCompletados = viajesEncontrados.Count(x => x.Completado != null);
+                    var cantidadViajesPendientes = viajesEncontrados.Count(x => x.Completado == null);
+
+                    listaDias.Add(new DiaCalendario()
+                    {
+                        NumeroDia = dia,
+                        NumeroMes = fecha.Month,
+                        Status = true,
+                        Items = new List<DiaCalendarioItem>()
+                });
+
+                    if (cantidadViajesPendientes != 0)
+                    {
+                        listaDias[^1].Items.Add(new DiaCalendarioItem()
+                        {
+                            content = $"{cantidadViajesPendientes} viajes pendientes",
+                            type = "warning"
+                        });
+                    }
+                    if (cantidadViajesCompletados != 0)
+                    {
+                        listaDias[^1].Items.Add(new DiaCalendarioItem()
+                        {
+                            content = $"{cantidadViajesCompletados} viajes completos",
+                            type = "success"
+                        });
+                    }
+                }
+
+                return Ok(JsonConvert.SerializeObject(listaDias));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPost]
         public ActionResult PostViaje([FromBody]Viaje viaje)
         {
@@ -67,7 +148,7 @@ namespace fleteApi.Controllers
             }
         }
 
-        [HttpPut("completado")]
+        [HttpPut("entregado")]
         public ActionResult FinalizarViaje(int id, DateTime completado)
         {
             try
@@ -77,6 +158,52 @@ namespace fleteApi.Controllers
                 if (viajeEncontrado == null) return BadRequest("No se encontró el viaje a modificar.");
 
                 viajeEncontrado.Completado = completado;
+
+                context.Entry(viajeEncontrado).State = EntityState.Modified;
+
+                context.SaveChanges();
+
+                return Ok(viajeEncontrado);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut("deshacer")]
+        public ActionResult DeshacerEntregadoViaje(int id)
+        {
+            try
+            {
+                var viajeEncontrado = context.Viaje.FirstOrDefault(x => x.Id == id);
+
+                if (viajeEncontrado == null) return BadRequest("No se encontró el viaje a modificar.");
+
+                viajeEncontrado.Completado = null;
+
+                context.Entry(viajeEncontrado).State = EntityState.Modified;
+
+                context.SaveChanges();
+
+                return Ok(viajeEncontrado);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut("orden")]
+        public ActionResult OrdenarViaje(int id, int ordenNuevo)
+        {
+            try
+            {
+                var viajeEncontrado = context.Viaje.FirstOrDefault(x => x.Id == id);
+
+                if (viajeEncontrado == null) return BadRequest("No se encontró el viaje a modificar.");
+
+                viajeEncontrado.Orden = ordenNuevo;
 
                 context.Entry(viajeEncontrado).State = EntityState.Modified;
 
