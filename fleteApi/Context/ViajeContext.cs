@@ -46,6 +46,10 @@ namespace fleteApi.Models
                 entity.Property(e => e.Telefono)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Observaciones)
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
             });
         }
     }

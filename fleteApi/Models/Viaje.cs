@@ -15,5 +15,6 @@ namespace fleteApi.Models
         public DateTime? Completado { get; set; }
         public DateTime? FechaEntrega { get; set; }
         public int? Orden { get; set; }
+        public string Observaciones { get; set; }
     }
 }
