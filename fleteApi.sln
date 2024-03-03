@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fleteApi", "fleteApi\fleteApi.csproj", "{3D919CC9-7277-4FFD-83CD-63063B2F6B66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fleteApi", "fleteApi.csproj", "{0A23BAED-34CC-49DF-98A3-833AA1EBA095}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3D919CC9-7277-4FFD-83CD-63063B2F6B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D919CC9-7277-4FFD-83CD-63063B2F6B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D919CC9-7277-4FFD-83CD-63063B2F6B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D919CC9-7277-4FFD-83CD-63063B2F6B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A23BAED-34CC-49DF-98A3-833AA1EBA095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A23BAED-34CC-49DF-98A3-833AA1EBA095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A23BAED-34CC-49DF-98A3-833AA1EBA095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A23BAED-34CC-49DF-98A3-833AA1EBA095}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {573EE966-F0DD-425F-885D-58629F6DDE34}
+		SolutionGuid = {32D3636C-8A64-4142-A0F8-2BA011A8355E}
 	EndGlobalSection
 EndGlobal
